@@ -1,0 +1,256 @@
+{
+  "version": 1,
+  "platform": "windows-nvidia",
+  "bootstrap": {
+    "python": {
+      "url": "https://www.python.org/ftp/python/3.13.14/python-3.13.14-embed-amd64.zip",
+      "size": 10964839,
+      "sha256": "90b4e5b9898b72d744650524bff92377c367f44bd5fbd09e3148656c080ad907",
+      "filename": "python-3.13.14-embed-amd64.zip",
+      "revision": "3.13.14",
+      "license": "PSF-2.0",
+      "source": "https://www.python.org/ftp/python/3.13.14/python-3.13.14-embed-amd64.zip.sigstore"
+    },
+    "pip": {
+      "url": "https://files.pythonhosted.org/packages/f3/6e/1736e5b4ae2b778ef2f81c47d797de9f891d4d8acb047a24ca37a60294dd/pip-26.2.1-py3-none-any.whl",
+      "size": 1816632,
+      "sha256": "71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e",
+      "filename": "pip-26.2.1-py3-none-any.whl",
+      "revision": "26.2.1",
+      "license": "MIT",
+      "source": "https://pypi.org/pypi/pip/26.2.1/json"
+    }
+  },
+  "dependencies": {
+    "comfy": {
+      "url": "https://github.com/Comfy-Org/ComfyUI/releases/download/v0.33.1/ComfyUI_windows_portable_nvidia.7z",
+      "size": 2133107036,
+      "sha256": "4a221588979b96b8244e0e50b2edca03af732acae1deba69d60aa3b4d60b9dba",
+      "filename": "ComfyUI_windows_portable_nvidia.7z",
+      "revision": "v0.33.1",
+      "license": "GPL-3.0 (core; bundled packages retain their licenses)",
+      "source": "https://api.github.com/repos/Comfy-Org/ComfyUI/releases/tags/v0.33.1",
+      "label": "ComfyUI engine",
+      "kind": "directory",
+      "destination": "dependencies/ComfyUI_windows_portable",
+      "requires": [
+        "archive_tool"
+      ],
+      "expanded_bytes": 10000000000,
+      "required_files": [
+        "ComfyUI/main.py",
+        "ComfyUI/comfy_extras/nodes_minimax_h3.py",
+        "ComfyUI/comfy/ldm/minimax/model.py"
+      ],
+      "markers": {
+        "ComfyUI/comfy/ldm/minimax/model.py": "cast_to(self.adaln_t_table, dtype=torch.float32, device=device)"
+      }
+    },
+    "comfy_python": {
+      "label": "ComfyUI Python + CUDA runtime",
+      "kind": "executable",
+      "destination": "dependencies/ComfyUI_windows_portable/python_embeded/python.exe",
+      "requires": [
+        "comfy"
+      ]
+    },
+    "gguf": {
+      "url": "https://codeload.github.com/city96/ComfyUI-GGUF/zip/6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+      "size": 38051,
+      "sha256": "aad273a0b774684285b4496f6edff7e2293bd29d71ef89926d6861bfdf4947ac",
+      "filename": "ComfyUI-GGUF-6ea2651e7df66d7585f6ffee804b20e92fb38b8a.zip",
+      "revision": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+      "license": "Apache-2.0",
+      "source": "https://github.com/city96/ComfyUI-GGUF/tree/6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+      "label": "GGUF model loader",
+      "kind": "directory",
+      "destination": "dependencies/custom_nodes/ComfyUI-GGUF",
+      "requires": [
+        "comfy_python",
+        "h3_helpers"
+      ],
+      "required_files": [
+        "__init__.py",
+        "loader.py",
+        "nodes.py"
+      ],
+      "existing": [
+        "ComfyUI/custom_nodes/ComfyUI-GGUF"
+      ],
+      "expanded_bytes": 5000000
+    },
+    "h3_helpers": {
+      "url": "https://codeload.github.com/jlucasmcrell/ComfyUI-H3-Multishot/zip/d7d197709fc93c1afb125e3db1dfd4ac0ae28c60",
+      "size": 6626779,
+      "sha256": "82e7358b02e71ef2dc1e03aba57754f74e611005d4fb0594545c713d4b9dadda",
+      "filename": "ComfyUI-H3-Multishot-d7d197709fc93c1afb125e3db1dfd4ac0ae28c60.zip",
+      "revision": "d7d197709fc93c1afb125e3db1dfd4ac0ae28c60",
+      "license": "MIT",
+      "source": "https://github.com/jlucasmcrell/ComfyUI-H3-Multishot/tree/d7d197709fc93c1afb125e3db1dfd4ac0ae28c60",
+      "label": "H3 memory and conditioning helpers",
+      "kind": "directory",
+      "destination": "dependencies/custom_nodes/ComfyUI-H3-Multishot",
+      "requires": [
+        "comfy_python"
+      ],
+      "required_files": [
+        "__init__.py",
+        "h3_advanced.py",
+        "h3_gguf_arch.py",
+        "h3_avbank_probe.py"
+      ],
+      "markers": {
+        "h3_advanced.py": "class H3FreeTextEncoder",
+        "h3_avbank_probe.py": "_apply_merge_patch()",
+        "__init__.py": "h3_avbank_probe"
+      },
+      "existing": [
+        "ComfyUI/custom_nodes/ComfyUI-H3-Multishot"
+      ],
+      "expanded_bytes": 10000000
+    },
+    "hybrid_node": {
+      "url": "https://raw.githubusercontent.com/BigStationW/ComfyUi-MiniMax-H3-Image-And-Reference-To-Video/f12a48fe9f1c8ee313a081a91327c31b5bfb9895/__init__.py",
+      "size": 10356,
+      "sha256": "980074f59bfd37e0a56006d9e0d2f3dd73f6c79036adc91f34f45f4035c9d5fa",
+      "filename": "__init__.py",
+      "revision": "f12a48fe9f1c8ee313a081a91327c31b5bfb9895",
+      "license": "Unspecified: pyproject points to missing LICENSE; download from upstream, do not bundle source",
+      "source": "https://github.com/BigStationW/ComfyUi-MiniMax-H3-Image-And-Reference-To-Video/tree/f12a48fe9f1c8ee313a081a91327c31b5bfb9895",
+      "label": "H3 first frame + reference node",
+      "kind": "directory",
+      "destination": "dependencies/custom_nodes/ComfyUi-MiniMax-H3-Image-And-Reference-To-Video",
+      "requires": [
+        "comfy_python"
+      ],
+      "required_files": [
+        "__init__.py"
+      ],
+      "markers": {
+        "__init__.py": "first_frame_first"
+      },
+      "existing": [
+        "ComfyUI/custom_nodes/ComfyUi-MiniMax-H3-Image-And-Reference-To-Video"
+      ],
+      "expanded_bytes": 100000
+    },
+    "encoder": {
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "size": 15687142551,
+      "sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6",
+      "filename": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "revision": "7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1?blobs=true",
+      "label": "H3 visual/text encoder",
+      "kind": "model",
+      "destination": "dependencies/models/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "existing": [
+        "ComfyUI/models/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors"
+      ]
+    },
+    "video_vae": {
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1/vae/minimax_h3_video_vae_fp16.safetensors",
+      "size": 5207808496,
+      "sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522",
+      "filename": "minimax_h3_video_vae_fp16.safetensors",
+      "revision": "7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1?blobs=true",
+      "label": "H3 video VAE",
+      "kind": "model",
+      "destination": "dependencies/models/vae/minimax_h3_video_vae_fp16.safetensors",
+      "existing": [
+        "ComfyUI/models/vae/minimax_h3_video_vae_fp16.safetensors"
+      ]
+    },
+    "audio_vae": {
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1/vae/minimax_h3_audio_vae_fp32.safetensors",
+      "size": 605254808,
+      "sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48",
+      "filename": "minimax_h3_audio_vae_fp32.safetensors",
+      "revision": "7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/Comfy-Org/MiniMax-H3/revision/7e75982b97cd5a41d2dcfa1904ee88d0686d6fd1?blobs=true",
+      "label": "H3 audio VAE",
+      "kind": "model",
+      "destination": "dependencies/models/vae/minimax_h3_audio_vae_fp32.safetensors",
+      "existing": [
+        "ComfyUI/models/vae/minimax_h3_audio_vae_fp32.safetensors"
+      ]
+    },
+    "b25": {
+      "url": "https://huggingface.co/hoidhxd/MiniMax-H3-Hybrid-b25-49-GGUF/resolve/69020fa0b7044c716b991c709e58562bcaaa4a7b/minimax_h3_hybrid_fl2va_ref2va_b25-49-Q4_0.gguf",
+      "size": 11387224800,
+      "sha256": "6b14de64d26a3e67316c31b11198eb01bee03cabddbd16cb6f55b65c7b70943c",
+      "filename": "minimax_h3_hybrid_fl2va_ref2va_b25-49-Q4_0.gguf",
+      "revision": "69020fa0b7044c716b991c709e58562bcaaa4a7b",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/hoidhxd/MiniMax-H3-Hybrid-b25-49-GGUF/revision/69020fa0b7044c716b991c709e58562bcaaa4a7b?blobs=true",
+      "label": "Hybrid balanced \u00b7 b25 Q4 \u00b7 recommended",
+      "kind": "model",
+      "destination": "dependencies/models/diffusion_models/minimax_h3_hybrid_fl2va_ref2va_b25-49-Q4_0.gguf",
+      "existing": [
+        "ComfyUI/models/diffusion_models/minimax_h3_hybrid_fl2va_ref2va_b25-49-Q4_0.gguf",
+        "ComfyUI/models/unet/minimax_h3_hybrid_fl2va_ref2va_b25-49-Q4_0.gguf"
+      ]
+    },
+    "b20": {
+      "url": "https://huggingface.co/smhfacct/Minimax-H3-fl2va-ref2va-hybrid-models/resolve/a36feb17fbd1f20ff4bdd509ccd07e2b7b585a38/minimax_h3_hybrid_fl2va_ref2va_b20-49-int8.safetensors",
+      "size": 20970379632,
+      "sha256": "8320246da06e5aae94988dc1ab336b19ebf2491b4393a330fb33bafca39f9d9a",
+      "filename": "minimax_h3_hybrid_fl2va_ref2va_b20-49-int8.safetensors",
+      "revision": "a36feb17fbd1f20ff4bdd509ccd07e2b7b585a38",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/smhfacct/Minimax-H3-fl2va-ref2va-hybrid-models/revision/a36feb17fbd1f20ff4bdd509ccd07e2b7b585a38?blobs=true",
+      "label": "Hybrid stronger references \u00b7 b20 INT8",
+      "kind": "model",
+      "destination": "dependencies/models/diffusion_models/minimax_h3_hybrid_fl2va_ref2va_b20-49-int8.safetensors",
+      "existing": [
+        "ComfyUI/models/diffusion_models/minimax_h3_hybrid_fl2va_ref2va_b20-49-int8.safetensors",
+        "ComfyUI/models/unet/minimax_h3_hybrid_fl2va_ref2va_b20-49-int8.safetensors"
+      ]
+    },
+    "fl2va": {
+      "url": "https://huggingface.co/joeygambino/MiniMax-H3-curve-GGUF/resolve/defd1c4e4e5617fae5ddff0f4668f9ac20ef5348/fl2va/MiniMax-H3-fl2va-curve-Q4_0.gguf",
+      "size": 11464827552,
+      "sha256": "226c83f6b971077f61f4ccf4ffaaed5d7ccf914642b7c25359da1da2f13dcd1a",
+      "filename": "MiniMax-H3-fl2va-curve-Q4_0.gguf",
+      "revision": "defd1c4e4e5617fae5ddff0f4668f9ac20ef5348",
+      "license": "MiniMax H3 Community License (upstream terms apply to derivative checkpoints)",
+      "source": "https://huggingface.co/api/models/joeygambino/MiniMax-H3-curve-GGUF/revision/defd1c4e4e5617fae5ddff0f4668f9ac20ef5348?blobs=true",
+      "label": "Original FL2VA \u00b7 Q4",
+      "kind": "model",
+      "destination": "dependencies/models/diffusion_models/MiniMax-H3-fl2va-curve-Q4_0.gguf",
+      "existing": [
+        "ComfyUI/models/diffusion_models/MiniMax-H3-fl2va-curve-Q4_0.gguf",
+        "ComfyUI/models/unet/MiniMax-H3-fl2va-curve-Q4_0.gguf"
+      ]
+    },
+    "ffmpeg": {
+      "url": "https://github.com/GyanD/codexffmpeg/releases/download/8.1.2/ffmpeg-8.1.2-essentials_build.zip",
+      "size": 109728040,
+      "sha256": "db580001caa24ac104c8cb856cd113a87b0a443f7bdf47d8c12b1d740584a2ec",
+      "filename": "ffmpeg-8.1.2-essentials_build.zip",
+      "revision": "8.1.2",
+      "license": "GPL-3.0",
+      "source": "https://api.github.com/repos/GyanD/codexffmpeg/releases/tags/8.1.2",
+      "label": "FFmpeg \u00b7 assembly and clip export",
+      "kind": "executable",
+      "destination": "dependencies/ffmpeg/bin/ffmpeg.exe",
+      "expanded_bytes": 350000000
+    },
+    "archive_tool": {
+      "url": "https://github.com/ip7z/7zip/releases/download/26.03/7zr.exe",
+      "size": 602624,
+      "sha256": "ad4c82fadcbdf93c03b4fc440f300509c7d60c5c2f4d183e35d9d70d6957037d",
+      "filename": "7zr.exe",
+      "revision": "26.03",
+      "license": "7-Zip license: LGPL-2.1-or-later and BSD-3-Clause; see upstream license",
+      "source": "https://api.github.com/repos/ip7z/7zip/releases/tags/26.03",
+      "label": "7-Zip archive extractor",
+      "kind": "executable",
+      "destination": "dependencies/tools/7zr.exe"
+    }
+  }
+}

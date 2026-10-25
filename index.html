@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>H3 MotionBench</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<header><div class="brand"><span class="mark">H3</span><div><strong>Motion Workbench</strong><small>LOCAL VIDEO + AUDIO LAB</small></div></div><div class="connection"><span id="led" class="led"></span><span id="connection">Connecting</span><a id="comfyLink" href="http://127.0.0.1:8188" target="_blank" rel="noreferrer">Open ComfyUI ↗</a></div></header>
+<nav class="page-tabs" aria-label="Workbench pages"><a href="/" aria-current="page">Generate</a><a href="/assemble.html">Assemble videos</a><a href="/settings.html">Settings</a></nav>
+<div class="service"><div class="engine-row"><div><span class="eyebrow">LOCAL ENGINE</span><strong id="gpu">MiniMax H3 · Hybrid</strong><small id="memory">Waiting for ComfyUI</small></div><div class="actions"><button id="start">Start ComfyUI</button><button id="connect">Refresh connection</button><button id="warmup">Load model · warm-up</button><button id="evict">Evict models</button><button id="logButton" class="quiet">Service log</button></div></div>
+<div class="output-controls"><label>Output folder<select id="output_folder" aria-describedby="outputFolderNote"></select></label><button id="addOutputFolder">Add folder…</button><button id="defaultOutputFolder">Set as default</button></div>
+<small id="outputFolderNote">Completed videos and their take records are saved here. ComfyUI retains its working copy.</small><small id="outputDefault"></small></div>
+<p id="dependencyNotice" class="dependency-notice" hidden>Generation tooling needs attention. <a href="/settings.html">Open Settings</a> to check paths and install missing dependencies.</p>
+<div id="notice" role="status" aria-live="polite" hidden></div>
+<main>
+<section class="editor">
+<div class="section-heading"><div><span class="eyebrow">01 / COMPOSE</span><h1>Give the frame a little life.</h1></div><span class="tag">VIDEO + AUDIO</span></div>
+<form id="settings">
+<label>Take name<input id="name" maxlength="100" value="Motion study"></label>
+<div class="row"><label>Model preset<select id="pipelinePreset" aria-label="Model preset"></select></label><label>Architecture<select id="architecture"></select></label></div>
+<label>Conditioning<select id="mode"></select></label><p id="conditioningHint" class="hint"></p>
+<div class="references">
+<div class="reference" id="firstBox"><div class="reference-title"><strong id="firstTitle">First frame · Picture 1</strong><label class="upload">Upload<input id="uploadFirst" type="file" accept="image/png,image/jpeg,image/webp"></label></div><div class="canvas-wrap"><canvas id="firstCanvas" width="608" height="352" aria-label="First frame prepared canvas"></canvas><span id="firstEmpty">Choose an approved character frame</span></div><select id="first" aria-label="First frame reference"><option value="">Choose a reference…</option></select><small id="firstSize">PNG, JPEG or WebP · up to 20 MB</small></div>
+<div class="reference" id="lastBox"><div class="reference-title"><strong id="lastTitle">Last frame</strong><label class="upload">Upload<input id="uploadLast" type="file" accept="image/png,image/jpeg,image/webp"></label></div><div class="canvas-wrap"><canvas id="lastCanvas" width="608" height="352" aria-label="Last frame prepared canvas"></canvas><span id="lastEmpty">Optional destination pose</span></div><select id="last" aria-label="Last frame reference"><option value="">Choose a reference…</option></select><div class="reference-actions"><button type="button" id="copyFirst" class="quiet small">Use first frame as endpoint</button><button type="button" id="clearLast" class="quiet small">Clear last frame</button></div></div>
+</div>
+<div class="row compact" id="imagePreparation"><label id="fitLabel">Fit frame anchors to canvas<select id="fit"><option value="contain">Contain · preserve whole figure</option><option value="cover">Cover · crop edges</option><option value="stretch">Stretch · change proportions</option></select></label><label>Canvas / alpha background<input type="color" id="background" value="#00ff00"></label></div>
+<p class="hint">The previews show the framing sent to H3. A single figure, matching canvas, consistent equipment and a fixed camera give the clearest consistency test. Equal endpoints help test a loop; they do not guarantee one.</p>
+<section id="identityBox" class="identity-box">
+<div class="reference-title"><strong>Character references</strong><label class="upload">Upload images<input id="uploadIdentity" type="file" multiple accept="image/png,image/jpeg,image/webp"></label></div>
+<p class="hint">Keep the original character artwork here for every segment. These images guide appearance throughout the clip; they do not set an endpoint.</p>
+<div class="identity-picker"><select id="identityPicker" aria-label="Character reference from shelf"></select><button id="addIdentity" type="button">Add reference</button></div>
+<div id="identityList" class="identity-list"></div>
+<label>Reference detail<select id="ref_image_size"><option value="match">Match render size · faster</option><option value="max">Maximum detail · more memory and time</option></select></label>
+<p class="hint">Reference proportions are preserved independently of the frame canvas. All images should depict the same character. Picture numbers follow the order shown.</p>
+</section>
+<p id="promptImageHint" class="hint"></p>
+<label>Visual action<textarea id="prompt" rows="6" placeholder="Describe one continuous action, the camera and what must remain consistent."></textarea></label>
+<div class="row"><label>Soundscape<textarea id="sound" rows="2"></textarea></label><label>Music<textarea id="music" rows="2"></textarea></label></div>
+<div class="section-heading settings-heading"><div><span class="eyebrow">02 / TUNE</span><h2>Render settings</h2></div><select id="quality" aria-label="Render preset"><option value="draft">Draft · 608 × 352</option><option value="square">Square draft · 512 × 512</option><option value="native">Native · 1344 × 768</option><option value="custom">Custom canvas</option></select></div>
+<div class="row three"><label>Width<input id="width" type="number" min="64" max="1536" step="32"></label><label>Height<input id="height" type="number" min="64" max="1536" step="32"></label><label>Duration · seconds<input id="seconds" type="number" min="0.2" max="15" step="0.1"></label></div>
+<div class="timing"><span id="timing"></span><span id="draftNote"></span></div>
+<div class="row three"><label>Steps<input id="steps" type="number" min="1" max="100"></label><label>Seed<input id="seed" type="number" min="0" max="9007199254740991" step="1"></label><div class="seed-actions"><button type="button" id="randomize" class="small">New seed</button><label class="check"><input id="random_seed" type="checkbox">Random each take</label></div></div>
+<details id="advanced"><summary>Model, sampling & memory <span>Advanced controls</span></summary>
+<label>H3 checkpoint<select id="model"></select></label>
+<label>Visual / text encoder<select id="encoder"></select></label>
+<div class="row"><label>Video VAE<select id="video_vae"></select></label><label>Audio VAE<select id="audio_vae"></select></label></div>
+<div class="row"><label>Model LoRA<select id="lora"><option value="">None · base model</option></select></label><label>LoRA strength<input id="lora_strength" type="number" min="0" max="2" step="0.05"></label></div>
+<div class="row"><button type="button" id="turbo">Try installed turbo · 8 steps</button><button type="button" id="base">Base model · 20 steps</button></div>
+<p class="hint" id="turboHint">Turbo is an experiment using the installed 4-step LoRA at 8 steps, Euler / beta. Compare identity and audio against the base model. Reduced steps can change quality.</p>
+<div class="row three"><label>Sampler<select id="sampler"></select></label><label>Scheduler<select id="scheduler"></select></label><label>Denoise<input id="denoise" type="number" min="0.01" max="1" step="0.01"></label></div>
+<label>Visual adherence <span class="subtle">1 = cleanest anchor; lower allows more drift</span><input id="visual_strength" type="number" min="0" max="1" step="0.001"></label>
+<div class="row"><label>Encoder device<select id="encoder_device"><option value="default">Auto · GPU with offloading</option><option value="cpu">CPU · slower, saves VRAM</option></select></label><div class="checks"><label class="check"><input type="checkbox" id="free_encoder">Evict encoder before sampling</label><label class="check"><input type="checkbox" id="tiled">Tiled video VAE decode</label><label class="check"><input type="checkbox" id="evict_after">Evict models when queue drains</label></div></div>
+<p class="hint">Audio is always generated and saved. This distilled workflow has no negative-prompt or CFG control. Model residency changes during generation; the memory reading is a device snapshot.</p>
+<section class="budget" aria-labelledby="budgetTitle">
+<h3 id="budgetTitle">VRAM budget</h3>
+<p id="budgetLive">Waiting for the live GPU reading.</p><div class="budget-track" aria-hidden="true"><span id="budgetUsed"></span></div>
+<p class="hint">Component sizes below are weight-file footprints: a planning baseline, not measured VRAM. Each bar compares one component with total GPU capacity.</p>
+<div id="budgetComponents"></div>
+<p id="budgetTotal"></p><p id="budgetStages" class="hint"></p>
+<p class="hint">Components load in stages and can offload to system RAM. Their sum is not a simultaneous VRAM requirement. Activations, attention, dequantization and decode buffers need additional space; larger canvases and longer clips increase that demand. Exact peak VRAM is not estimated here.</p>
+</section>
+</details>
+<div class="submit-row"><button type="submit" id="generate" class="primary">Generate take <span>↗</span></button><button type="button" id="savePreset">Save settings</button><label class="upload button">Load settings<input type="file" id="loadPreset" accept="application/json,.json"></label></div>
+<small class="footnote">Warm-up renders a 256 × 256, 22-frame, 1-step test. It loads the pipeline, creates a video, and does not pin every model in VRAM. Eviction releases all ComfyUI models once idle.</small>
+</form>
+</section>
+<aside>
+<div class="section-heading"><div><span class="eyebrow">03 / REVIEW</span><h2>Take monitor</h2></div><span id="queueCount" class="tag">IDLE</span></div>
+<div id="current" class="current"><div class="current-top"><strong id="currentTitle">Ready for a first take</strong><span id="elapsed"></span></div><p id="stage">Choose a frame and describe a small motion.</p><progress id="progress" max="100" value="0"></progress><small id="progressText">Sampling progress appears here. Loading and decoding are separate stages.</small></div>
+<div class="player"><video id="video" controls playsinline preload="metadata"></video><div id="videoEmpty"><span class="play-icon">▷</span><strong>Your motion lives here.</strong><p>Completed takes keep their native audio.<br>Press play to listen.</p></div></div>
+<div class="player-tools"><label class="check"><input id="loopPlayback" type="checkbox">Loop</label><label>Speed<select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option></select></label><button id="prevFrame" class="small" aria-label="Previous frame">− Frame</button><button id="nextFrame" class="small" aria-label="Next frame">+ Frame</button></div>
+<div id="selectedInfo" class="selected-info">Select a completed take to review it.</div>
+<div id="downloads" class="actions" hidden><a id="download" class="button">Download video</a><button id="saveFirstFrame" type="button" title="Extract the first video frame as a full-resolution PNG and keep it in the reference shelf">Save first frame</button><button id="useFirstFrame" type="button" class="quiet" title="Prepare a video leading into this take: use its first frame as the endpoint, match the canvas and keep character references with Hybrid">Use first frame as last</button><button id="saveLastFrame" type="button" title="Extract the final video frame as a full-resolution PNG and keep it in the reference shelf">Save last frame</button><button id="useLastFrame" type="button" class="quiet" title="Use the final video frame to start the next segment, matching its canvas size and clearing the old endpoint">Use last frame as first</button><a id="record" class="button quiet">Settings & provenance</a><a id="workflow" class="button quiet">ComfyUI graph</a></div>
+<section id="takeHistory" aria-label="Take history">
+<div class="section-heading history-heading"><h2>Take history</h2><div class="actions history-tools"><span id="takeCount" class="subtle">0 takes</span><button id="emptyTrash" type="button" class="small danger" hidden title="Permanently remove all discarded takes and their saved settings"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7M14 10v7"/></svg><span id="trashCount">Empty trash</span></button></div></div>
+<div id="history"><div class="empty-history">Every take keeps its resolved seed, references and graph. Reuse settings to change one variable at a time.</div></div>
+<details id="inactiveTakes" hidden><summary>Cancelled and discarded <span id="inactiveCount"></span></summary><div id="inactiveHistory"></div></details>
+</section>
+<details class="guide"><summary>Reference field notes</summary><p>Start with a clean, single-character, full-body image in the intended pose. Match facing, scale, outfit, equipment, background and padding between endpoints.</p><p>Keep the camera locked and ask for one restrained motion. A contact sheet used as a first frame can animate the sheet itself.</p><p>Review silhouette, face, hands, equipment, feet and endpoint alignment. Check sound separately. Short drafts test the pipeline; final quality needs a longer native-canvas take.</p></details>
+</aside>
+</main>
+<dialog id="folderDialog"><div class="section-heading"><h2>Choose an output folder</h2><button id="closeFolder">Close</button></div>
+<label>Local folder path<input id="folderPath" placeholder="D:\Animations\H3"></label>
+<div class="actions folder-tools"><button id="browseFolder">Browse this path</button><button id="folderParent">Up one level</button><button id="folderDrives">Drives</button></div>
+<p id="folderMessage" class="hint" role="status">Choose a folder below or paste a path. New folders are created when added.</p><div id="folderList"></div>
+<div class="actions folder-tools"><button id="useFolder" class="primary">Add selected folder</button></div></dialog>
+<dialog id="deleteDialog"><div class="section-heading"><h2>Delete generated video?</h2><button id="closeDelete">Cancel</button></div><p id="deleteDescription">This removes the video from both ComfyUI's output and the selected output folder, along with its copied take record. The settings remain in history for reuse.</p><div class="actions folder-tools"><button id="confirmDelete" class="danger">Delete video copies</button><button id="cancelDelete" class="quiet">Keep video</button></div></dialog>
+<dialog id="logDialog"><div class="section-heading"><h2>ComfyUI service log</h2><button id="closeLog">Close</button></div><pre id="logText"></pre></dialog>
+<footer>LOCAL ONLY <span>MiniMax H3 / 24 fps / native audiovisual output</span><span id="saved">Settings saved in this browser</span></footer>
+<dialog id="renameDialog"><form id="renameForm"><h2>Rename clip</h2><p>This changes the inventory label. Video files and paths stay unchanged.</p><label>Clip name<input id="renameName" maxlength="100" required></label><p id="renameError" role="alert"></p><div class="actions"><button id="confirmRename" type="submit">Save name</button><button id="cancelRename" type="button" class="quiet">Cancel</button></div></form></dialog>
+</body></html>

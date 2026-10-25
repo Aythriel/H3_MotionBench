@@ -1,0 +1,43 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const assert=require('assert/strict');
+const fs=require('fs');
+const path=require('path');
+(async()=>{
+  const browser=await chromium.launch({headless:true,channel:'chrome'});
+  const page=await browser.newPage({viewport:{width:1440,height:1080}});
+  const base=process.env.H3_SETUP_TEST_URL||'http://127.0.0.1:8794';
+  const evidence=path.join(__dirname,'.artifacts/portable-ui');fs.mkdirSync(evidence,{recursive:true});
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  try{
+    await page.goto(base+'/settings.html');
+    await page.waitForFunction(()=>document.querySelectorAll('[data-path]').length>5);
+    assert.equal(await page.locator('[data-model="b25"]').isChecked(),true);
+    assert.equal(await page.locator('[data-model="b20"]').isChecked(),false);
+    assert.equal(await page.locator('[data-path="b25"]').getAttribute('aria-invalid'),'true');
+    assert.match(await page.locator('#readiness').textContent(),/attention/);
+    await page.locator('#combination').selectOption('b25,b20,fl2va');
+    await page.waitForFunction(()=>document.querySelector('#planItems').textContent.includes('Original FL2VA'));
+    assert.equal(await page.locator('[data-model]:checked').count(),3);
+    await page.locator('[data-model="b25"]').uncheck();
+    assert.equal(await page.locator('#combination').inputValue(),'custom');
+    await page.locator('#combination').selectOption('b25');
+    await page.locator('[data-path="encoder"]').fill('missing/encoder.safetensors');
+    assert.equal(await page.locator('#downloadDependencies').isDisabled(),true);
+    await page.locator('#savePaths').click();
+    await page.waitForFunction(()=>document.querySelector('#notice').textContent.includes('Settings saved'));
+    assert.equal(await page.locator('[data-path="encoder"]').getAttribute('aria-invalid'),'true');
+    await page.reload();await page.waitForFunction(()=>document.querySelectorAll('[data-path]').length>5);
+    assert.equal(await page.locator('[data-path="encoder"]').inputValue(),'missing/encoder.safetensors');
+    await page.screenshot({path:path.join(evidence,'settings-desktop.png'),fullPage:true});
+    await page.goto(base+'/');
+    await page.waitForFunction(()=>!document.querySelector('#dependencyNotice').hidden);
+    assert.equal(await page.locator('#generate').isDisabled(),true);
+    assert.equal(await page.locator('#warmup').isDisabled(),true);
+    await page.goto(base+'/settings.html');await page.waitForFunction(()=>document.querySelectorAll('[data-path]').length>5);
+    await page.setViewportSize({width:390,height:844});
+    await page.screenshot({path:path.join(evidence,'settings-mobile.png'),fullPage:true});
+    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+    assert.deepEqual(errors,[]);
+    console.log('H3_PORTABLE_SETTINGS_UI_PASSED');
+  }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});

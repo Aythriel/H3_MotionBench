@@ -1,0 +1,12 @@
+data/
+migration/
+config.local.json
+.artifacts/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+exports/
+dependencies/
+.runtime/
+dist/

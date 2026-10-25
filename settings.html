@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Settings · H3 MotionBench</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/settings.css"><script src="/settings.js" defer></script></head>
+<body>
+<header><div class="brand"><span class="mark">H3</span><div><strong>Motion Workbench</strong><small>LOCAL VIDEO + AUDIO LAB</small></div></div><span class="tag">WINDOWS + NVIDIA</span></header>
+<nav class="page-tabs" aria-label="Workbench pages"><a href="/">Generate</a><a href="/assemble.html">Assemble videos</a><a href="/settings.html" aria-current="page">Settings</a></nav>
+<div id="notice" role="status" aria-live="polite" hidden></div>
+<main class="setup-layout">
+<section><span class="eyebrow">SET UP THIS PC</span><h1>One home for your dependencies.</h1><p class="hint">Use an existing installation or download what is missing into this tool's folder. Your images and takes stay separate.</p>
+<div class="setup-status"><strong id="readiness">Checking this PC…</strong><p id="hardware" class="hint"></p><p id="configError" class="take-error" hidden></p><p id="restartNotice" class="hint" hidden>Engine paths changed. Restart ComfyUI to load the new configuration.</p><div class="actions"><button id="validate">Check paths again</button><button id="startEngine">Start ComfyUI</button><button id="restartEngine" class="quiet">Restart ComfyUI</button></div></div>
+<section class="setup-models"><h2>Choose models to download</h2><p class="hint">Select any combination. The encoder and video/audio VAEs are shared; existing compatible files are reused.</p>
+<label>Model combination<select id="combination"><option value="b25">Balanced hybrid · recommended</option><option value="b25,b20">Both hybrid models</option><option value="b25,b20,fl2va">All three models</option><option value="fl2va">Original FL2VA only</option><option value="custom">Custom combination</option></select></label>
+<div class="model-choices">
+<label class="model-choice"><input type="checkbox" data-model="b25" checked><span><strong>Hybrid balanced · b25 Q4 <em>Recommended</em></strong><small>Starting frame + character references. The default, smaller hybrid checkpoint.</small></span></label>
+<label class="model-choice"><input type="checkbox" data-model="b20"><span><strong>Hybrid stronger references · b20 INT8</strong><small>Starting frame + references with the larger reference-focused variant.</small></span></label>
+<label class="model-choice"><input type="checkbox" data-model="fl2va"><span><strong>Original FL2VA · Q4</strong><small>First/last frame conditioning without separate character references.</small></span></label>
+</div>
+<div class="download-plan"><strong id="planSummary">Calculating download size…</strong><p id="planSpace" class="hint"></p><p id="planItems" class="hint"></p><p id="managedPath" class="hint"></p><button id="downloadDependencies" class="primary" disabled>Download missing dependencies</button><p class="hint">Downloads use pinned sources and SHA-256 checks. Completed files are kept; interrupted downloads resume on retry. <a href="#dependencyPaths">Individual installers and sources</a> are below.</p></div>
+</section>
+<section id="installStatus" class="install-status" hidden><h2>Installation</h2><p id="installMessage" role="status" aria-live="polite"></p><progress id="installProgress" max="1" value="0"></progress><p id="installBytes" class="hint"></p><div class="actions"><button id="cancelInstall" class="quiet">Cancel installation</button><button id="showLog" class="quiet">View installation log</button></div></section>
+</section>
+<section id="dependencyPaths"><h2>Dependency paths</h2><p class="hint">Red fields are unavailable or incompatible on this PC. Missing optional models do not block an installed preset. A missing archive extractor matters only when installing ComfyUI.</p>
+<label>Dashboard runtime<input id="dashboardRuntime" readonly></label>
+<div class="detect-row"><label>Existing ComfyUI portable folder<input id="existingComfy" placeholder="E:\ComfyUI_windows_portable"></label><button id="detect">Find its dependencies</button></div>
+<form id="pathsForm"><div id="dependencyRows"></div><label>ComfyUI port<input id="comfyPort" type="number" min="1024" max="65535" value="8188"></label><div class="actions save-paths"><button id="savePaths" type="submit">Save paths</button><span id="dirtyNote" class="hint"></span></div></form>
+</section>
+</main>
+<dialog id="logDialog"><div class="section-heading"><h2>Installation log</h2><button id="closeLog">Close</button></div><pre id="logText"></pre></dialog>
+<footer>LOCAL ONLY <span>Paths are checked at startup and before generation</span></footer>
+</body></html>
